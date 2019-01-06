@@ -18,31 +18,39 @@ public class VaultRecordService {
     private VaultRecordRepository repository;
 
     public List<VaultRecord> findAll() {
-        return repository.findAll();
+        List<VaultRecord> records = repository.findAll();
+        records.forEach(r -> r.setEncodedPassword(null));
+        return records;
     }
 
-    public VaultRecord findOne(String id) {
-        return repository.findOne(id);
+    public VaultRecord findOne(String id) throws IllegalArgumentException {
+        VaultRecord vaultRecord = repository.findOne(id);
+        if (vaultRecord == null) {
+            throw new IllegalArgumentException(String.format("No Vault record for id - %s", id));
+        }
+
+        vaultRecord.setEncodedPassword(null);
+        return vaultRecord;
     }
 
     public VaultRecord create(VaultRecord record) {
         return repository.save(record);
     }
 
-    public VaultRecord update(String id, VaultRecord updatedRecord) throws Exception {
+    public VaultRecord update(String id, VaultRecord updatedRecord) throws IllegalArgumentException {
         VaultRecord existingRecord = repository.findOne(id);
         if (existingRecord == null) {
-            throw new Exception(String.format("No Vault record for id - %s", id));
+            throw new IllegalArgumentException(String.format("No Vault record for id - %s", id));
         }
 
         BeanUtils.copyProperties(updatedRecord, existingRecord);
         return repository.save(existingRecord);
     }
 
-    public void delete(String id) throws Exception {
+    public void delete(String id) throws IllegalArgumentException {
         VaultRecord existingRecord = repository.findOne(id);
         if (existingRecord == null) {
-            throw new Exception(String.format("No Vault record for id - %s", id));
+            throw new IllegalArgumentException(String.format("No Vault record for id - %s", id));
         }
 
         repository.delete(existingRecord);

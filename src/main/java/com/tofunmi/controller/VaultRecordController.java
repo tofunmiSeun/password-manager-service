@@ -11,34 +11,34 @@ import java.util.List;
  * Created By Tofunmi on 11/24/2018
  */
 @RestController
-@RequestMapping(value = "/api/v1/vault-records")
+@RequestMapping(value = "api/v1/vault-records")
 public class VaultRecordController {
 
     @Autowired
     private VaultRecordService service;
 
-    @RequestMapping(method = RequestMethod.GET)
-    public List<VaultRecord> findAll() {
+    @GetMapping
+    public List<VaultRecord> getAll() {
         return service.findAll();
     }
 
-    @RequestMapping(method = RequestMethod.POST)
+    @PostMapping
     public VaultRecord create(@RequestBody VaultRecord record) {
         return service.create(record);
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public VaultRecord get(@PathVariable String id) {
+    @GetMapping("{id}")
+    public VaultRecord get(@PathVariable String id) throws IllegalArgumentException {
         return service.findOne(id);
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    public VaultRecord update(@PathVariable String id, @RequestBody VaultRecord record) throws Exception {
+    @PostMapping("edit/{id}")
+    public VaultRecord update(@PathVariable String id, @RequestBody VaultRecord record) throws IllegalArgumentException {
         return service.update(id, record);
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    public void delete(@PathVariable String id) throws Exception {
+    @DeleteMapping("{id}")
+    public void delete(@PathVariable String id) throws IllegalArgumentException {
         service.delete(id);
     }
 }

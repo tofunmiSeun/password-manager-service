@@ -1,8 +1,11 @@
 package com.tofunmi.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.time.LocalDateTime;
 
 /**
  * Created By Tofunmi on 11/24/2018
@@ -15,6 +18,8 @@ public class VaultRecord {
     private String url;
     private String username;
     private String encodedPassword;
+    @JsonIgnore
+    private LocalDateTime createdAt;
 
     public VaultRecord(String name, String url) {
         this.name = name;
@@ -63,8 +68,16 @@ public class VaultRecord {
         this.encodedPassword = encodedPassword;
     }
 
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
     @Override
     public String toString() {
-        return String.format("Vault record for %s - (%s)", name, url);
+        return String.format("Vault record for %s - (%s). Created on %s", name, url, createdAt);
     }
 }

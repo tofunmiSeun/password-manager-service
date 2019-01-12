@@ -3,8 +3,11 @@ package com.tofunmi.controller;
 import com.tofunmi.model.VaultRecord;
 import com.tofunmi.service.VaultRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
+
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -18,12 +21,12 @@ public class VaultRecordController {
     private VaultRecordService service;
 
     @GetMapping
-    public List<VaultRecord> getAll() {
-        return service.findAll();
+    public Page<VaultRecord> getAll(@RequestParam(required = false, defaultValue = "0") Integer page) {
+        return service.findAll(page);
     }
 
     @PostMapping
-    public VaultRecord create(@RequestBody VaultRecord record) {
+    public VaultRecord create(@RequestBody VaultRecord record) throws IllegalArgumentException {
         return service.create(record);
     }
 
@@ -37,8 +40,19 @@ public class VaultRecordController {
         return service.update(id, record);
     }
 
-    @DeleteMapping("{id}")
+    @PostMapping("delete/{id}")
     public void delete(@PathVariable String id) throws IllegalArgumentException {
         service.delete(id);
+    }
+
+    @GetMapping("search")
+    public Page<VaultRecord> search(@RequestParam String searchKey, @RequestParam(required = false, defaultValue = "0") Integer page) {
+        return service.search(searchKey, page);
+    }
+
+    @GetMapping("reveal-password/{id}")
+    public List<String> revealPassword(@PathVariable String id) throws IllegalArgumentException {
+        String password = service.revealPassword(id);
+        return Collections.singletonList(password);
     }
 }

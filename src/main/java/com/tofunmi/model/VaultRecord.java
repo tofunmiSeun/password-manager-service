@@ -21,13 +21,6 @@ public class VaultRecord {
     @JsonIgnore
     private LocalDateTime createdAt;
 
-    public VaultRecord(String name, String url) {
-        this.name = name;
-        this.url = url;
-    }
-
-    public VaultRecord() {}
-
     public String getId() {
         return id;
     }

@@ -19,8 +19,6 @@ import java.util.List;
 @Service
 public class VaultRecordService {
 
-    private final int pageSize = 8;
-
     @Autowired
     private VaultRecordRepository repository;
 
@@ -31,22 +29,30 @@ public class VaultRecordService {
         return records;
     }
 
+    public VaultRecord create(VaultRecord record) throws IllegalArgumentException {
+        validateEntry(record);
+        record.setCreatedAt(LocalDateTime.now());
+        VaultRecord newlyCreatedVaultRecord = repository.save(record);
+        newlyCreatedVaultRecord.setEncodedPassword(null);
+        return newlyCreatedVaultRecord;
+    }
+
     public VaultRecord findOne(String id) throws IllegalArgumentException {
         VaultRecord vaultRecord = findById(id);
         vaultRecord.setEncodedPassword(null);
         return vaultRecord;
     }
 
-    public VaultRecord create(VaultRecord record) throws IllegalArgumentException {
-        validateEntry(record);
-        record.setCreatedAt(LocalDateTime.now());
-        return repository.save(record);
-    }
-
     public VaultRecord update(String id, VaultRecord updatedRecord) throws IllegalArgumentException {
+        if (updatedRecord == null) {
+            throw new IllegalArgumentException("Updated record is not set");
+        }
         VaultRecord existingRecord = findById(id);
         copyPropertiesForUpdate(existingRecord, updatedRecord);
-        return repository.save(existingRecord);
+
+        existingRecord = repository.save(existingRecord);
+        existingRecord.setEncodedPassword(null);
+        return existingRecord;
     }
 
     public void delete(String id) throws IllegalArgumentException {
@@ -54,9 +60,22 @@ public class VaultRecordService {
         repository.delete(existingRecord);
     }
 
+    public Page<VaultRecord> search(String searchKey, int pageNumber) {
+        PageRequest pageRequest = buildPageRequest(pageNumber);
+        Page<VaultRecord> records = repository.findAllByNameLikeIgnoreCaseOrUrlLikeIgnoreCase(searchKey, searchKey, pageRequest);
+        records.forEach(r -> r.setEncodedPassword(null));
+        return records;
+    }
+
     public String revealPassword(String id) throws IllegalArgumentException {
         VaultRecord vaultRecord = findById(id);
         return vaultRecord.getEncodedPassword();
+    }
+
+    private PageRequest buildPageRequest(int pageNumber) {
+        final int pageSize = 8;
+        Sort sort = new Sort(Sort.Direction.DESC, "createdAt");
+        return new PageRequest(pageNumber, pageSize, sort);
     }
 
     private VaultRecord findById(String id) throws IllegalArgumentException {
@@ -68,37 +87,33 @@ public class VaultRecordService {
     }
 
     private void validateEntry(VaultRecord record) throws IllegalArgumentException {
-        if (record.getName() == null || record.getName().isEmpty()) {
+        if (isNullOrEmpty(record.getName())) {
             throw new IllegalArgumentException("Name is required");
         }
 
-        if (record.getUsername() == null || record.getUsername().isEmpty()) {
+        if (isNullOrEmpty(record.getUrl())) {
+            record.setUrl("N/A");
+        }
+
+        if (isNullOrEmpty(record.getUsername())) {
             throw new IllegalArgumentException("username is required");
         }
 
-        if (record.getEncodedPassword() == null || record.getEncodedPassword().isEmpty()) {
+        if (isNullOrEmpty(record.getEncodedPassword())) {
             throw new IllegalArgumentException("Password is required");
         }
     }
 
     private void copyPropertiesForUpdate(VaultRecord existingRecord, VaultRecord updatedRecord) {
         existingRecord.setName(updatedRecord.getName());
-        existingRecord.setUrl(updatedRecord.getUrl());
+        existingRecord.setUrl(isNullOrEmpty(updatedRecord.getUrl()) ? "N/A" : updatedRecord.getUrl());
         existingRecord.setUsername(updatedRecord.getUsername());
-        if (updatedRecord.getEncodedPassword() != null && !updatedRecord.getEncodedPassword().isEmpty()) {
+        if (!isNullOrEmpty(updatedRecord.getEncodedPassword())) {
             existingRecord.setEncodedPassword(updatedRecord.getEncodedPassword());
         }
     }
 
-    public Page<VaultRecord> search(String searchKey, int pageNumber) {
-        PageRequest pageRequest = buildPageRequest(pageNumber);
-        Page<VaultRecord> records = repository.findAllByNameLikeIgnoreCaseOrUrlLikeIgnoreCase(searchKey, searchKey, pageRequest);
-        records.forEach(r -> r.setEncodedPassword(null));
-        return records;
-    }
-
-    private PageRequest buildPageRequest(int pageNumber) {
-        Sort sort = new Sort(Sort.Direction.DESC, "createdAt");
-        return new PageRequest(pageNumber, pageSize, sort);
+    private boolean isNullOrEmpty(String aString) {
+        return aString == null || aString.isEmpty();
     }
 }

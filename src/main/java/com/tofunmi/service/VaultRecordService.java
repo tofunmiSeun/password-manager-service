@@ -1,17 +1,18 @@
 package com.tofunmi.service;
 
+import com.tofunmi.model.SectionedVaultRecord;
 import com.tofunmi.model.VaultRecord;
 import com.tofunmi.repository.VaultRecordRepository;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created By Tofunmi on 11/24/2018
@@ -115,5 +116,34 @@ public class VaultRecordService {
 
     private boolean isNullOrEmpty(String aString) {
         return aString == null || aString.isEmpty();
+    }
+
+    public List<VaultRecord> findAll() {
+        List<VaultRecord> records = repository.findAll(new Sort(Sort.Direction.ASC, "name"));
+        records.forEach(r -> r.setEncodedPassword(null));
+        return records;
+    }
+
+    public List<SectionedVaultRecord> findAllSectioned() {
+        List<SectionedVaultRecord> sectionedVaultRecords = new ArrayList<>();
+
+        List<VaultRecord> vaultRecords = findAll();
+        for (VaultRecord vaultRecord : vaultRecords) {
+            Character startingCharacter = vaultRecord.getName().toUpperCase().charAt(0);
+
+            SectionedVaultRecord sectionedVaultRecord = sectionedVaultRecords.stream()
+                    .filter(e -> Objects.equals(startingCharacter, e.getTitle()))
+                    .findAny()
+                    .orElse(null);
+
+            if (sectionedVaultRecord == null) {
+                sectionedVaultRecord = new SectionedVaultRecord(startingCharacter);
+                sectionedVaultRecords.add(sectionedVaultRecord);
+            }
+
+            sectionedVaultRecord.getData().add(vaultRecord);
+        }
+
+        return sectionedVaultRecords;
     }
 }

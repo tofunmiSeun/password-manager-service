@@ -1,5 +1,6 @@
 package com.tofunmi.controller;
 
+import com.tofunmi.model.SectionedVaultRecord;
 import com.tofunmi.model.VaultRecord;
 import com.tofunmi.service.VaultRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,12 @@ public class VaultRecordController {
     @Autowired
     private VaultRecordService service;
 
-    @GetMapping
+    @GetMapping("sectioned")
+    public List<SectionedVaultRecord> getAllSectioned() {
+        return service.findAllSectioned();
+    }
+
+    @GetMapping("paged")
     public Page<VaultRecord> getAll(@RequestParam(required = false, defaultValue = "0") Integer page) {
         return service.findAll(page);
     }

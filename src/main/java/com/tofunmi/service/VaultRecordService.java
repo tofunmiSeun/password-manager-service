@@ -3,7 +3,6 @@ package com.tofunmi.service;
 import com.tofunmi.model.SectionedVaultRecord;
 import com.tofunmi.model.VaultRecord;
 import com.tofunmi.repository.VaultRecordRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -20,8 +19,11 @@ import java.util.Objects;
 @Service
 public class VaultRecordService {
 
-    @Autowired
-    private VaultRecordRepository repository;
+    private final VaultRecordRepository repository;
+
+    public VaultRecordService(VaultRecordRepository repository) {
+        this.repository = repository;
+    }
 
     public Page<VaultRecord> findAll(int pageNumber) {
         PageRequest pageRequest = buildPageRequest(pageNumber);
@@ -112,6 +114,7 @@ public class VaultRecordService {
         if (!isNullOrEmpty(updatedRecord.getEncodedPassword())) {
             existingRecord.setEncodedPassword(updatedRecord.getEncodedPassword());
         }
+        existingRecord.setLastUpdateTime(LocalDateTime.now());
     }
 
     private boolean isNullOrEmpty(String aString) {
@@ -125,9 +128,16 @@ public class VaultRecordService {
     }
 
     public List<SectionedVaultRecord> findAllSectioned() {
+        return toSections(findAll());
+    }
+
+    public List<SectionedVaultRecord> searchSectioned(String searchKey) {
+        return toSections(repository.findAllByNameLikeIgnoreCaseOrUrlLikeIgnoreCase(searchKey, searchKey));
+    }
+
+    private List<SectionedVaultRecord> toSections(List<VaultRecord> vaultRecords) {
         List<SectionedVaultRecord> sectionedVaultRecords = new ArrayList<>();
 
-        List<VaultRecord> vaultRecords = findAll();
         for (VaultRecord vaultRecord : vaultRecords) {
             Character startingCharacter = vaultRecord.getName().toUpperCase().charAt(0);
 

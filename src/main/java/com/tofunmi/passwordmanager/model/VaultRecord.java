@@ -1,4 +1,4 @@
-package com.tofunmi.model;
+package com.tofunmi.passwordmanager.model;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;

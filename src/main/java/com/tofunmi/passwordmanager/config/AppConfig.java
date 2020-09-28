@@ -1,4 +1,4 @@
-package com.tofunmi.config;
+package com.tofunmi.passwordmanager.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

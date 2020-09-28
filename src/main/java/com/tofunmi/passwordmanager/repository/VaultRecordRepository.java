@@ -1,6 +1,6 @@
-package com.tofunmi.repository;
+package com.tofunmi.passwordmanager.repository;
 
-import com.tofunmi.model.VaultRecord;
+import com.tofunmi.passwordmanager.model.VaultRecord;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;

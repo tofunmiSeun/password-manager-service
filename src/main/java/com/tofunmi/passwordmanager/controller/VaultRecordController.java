@@ -1,8 +1,8 @@
-package com.tofunmi.controller;
+package com.tofunmi.passwordmanager.controller;
 
-import com.tofunmi.model.SectionedVaultRecord;
-import com.tofunmi.model.VaultRecord;
-import com.tofunmi.service.VaultRecordService;
+import com.tofunmi.passwordmanager.model.SectionedVaultRecord;
+import com.tofunmi.passwordmanager.model.VaultRecord;
+import com.tofunmi.passwordmanager.service.VaultRecordService;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 

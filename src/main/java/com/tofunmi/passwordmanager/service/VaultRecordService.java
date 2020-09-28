@@ -1,8 +1,8 @@
-package com.tofunmi.service;
+package com.tofunmi.passwordmanager.service;
 
-import com.tofunmi.model.SectionedVaultRecord;
-import com.tofunmi.model.VaultRecord;
-import com.tofunmi.repository.VaultRecordRepository;
+import com.tofunmi.passwordmanager.repository.VaultRecordRepository;
+import com.tofunmi.passwordmanager.model.SectionedVaultRecord;
+import com.tofunmi.passwordmanager.model.VaultRecord;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;

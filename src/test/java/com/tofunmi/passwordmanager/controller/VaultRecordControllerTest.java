@@ -1,6 +1,6 @@
-package com.tofunmi.controller;
+package com.tofunmi.passwordmanager.controller;
 
-import com.tofunmi.service.VaultRecordService;
+import com.tofunmi.passwordmanager.service.VaultRecordService;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;

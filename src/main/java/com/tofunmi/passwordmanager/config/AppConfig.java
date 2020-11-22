@@ -1,6 +1,5 @@
 package com.tofunmi.passwordmanager.config;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -18,9 +17,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @Configuration
 @EnableSwagger2
 public class AppConfig {
-
-    @Value("${web-client-url:}")
-    private String webClientUrl;
 
     @Bean
     public WebMvcConfigurer corsConfigurer() {

@@ -19,12 +19,15 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 public class AppConfig {
 
+    @Value("${web-client-url:}")
+    private String webClientUrl;
+
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurerAdapter() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/api/**");
+                registry.addMapping("/api/**").allowedOrigins(webClientUrl);
             }
         };
     }

@@ -131,7 +131,7 @@ public class VaultRecordServiceTest {
 
     @Test
     public void testFindOne() {
-        when(vaultRecordRepository.findOne(any(String.class))).thenAnswer(mockFindOneAnswer());
+        when(vaultRecordRepository.findById(any(String.class))).thenAnswer(mockFindOneAnswer());
 
         final VaultRecord vaultRecord = vaultRecordService.findOne("1");
         assertNotNull(vaultRecord);
@@ -141,19 +141,19 @@ public class VaultRecordServiceTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testFindOneInvalidId() {
-        when(vaultRecordRepository.findOne(any(String.class))).thenAnswer(mockFindOneAnswer());
+        when(vaultRecordRepository.findById(any(String.class))).thenAnswer(mockFindOneAnswer());
         vaultRecordService.findOne("invalidId");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testDeleteInvalidId() {
-        when(vaultRecordRepository.findOne(any(String.class))).thenAnswer(mockFindOneAnswer());
+        when(vaultRecordRepository.findById(any(String.class))).thenAnswer(mockFindOneAnswer());
         vaultRecordService.delete("invalidId");
     }
 
     @Test
     public void testRevealPassword() {
-        when(vaultRecordRepository.findOne(any(String.class))).thenAnswer(mockFindOneAnswer());
+        when(vaultRecordRepository.findById(any(String.class))).thenAnswer(mockFindOneAnswer());
 
         final String password = vaultRecordService.revealPassword("1");
         assertEquals("mockPassword1", password);
@@ -161,19 +161,19 @@ public class VaultRecordServiceTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testRevealPasswordInvalidId() {
-        when(vaultRecordRepository.findOne(any(String.class))).thenAnswer(mockFindOneAnswer());
+        when(vaultRecordRepository.findById(any(String.class))).thenAnswer(mockFindOneAnswer());
         vaultRecordService.revealPassword("invalidId");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testUpdateNullObject() {
-        when(vaultRecordRepository.findOne(any(String.class))).thenAnswer(mockFindOneAnswer());
+        when(vaultRecordRepository.findById(any(String.class))).thenAnswer(mockFindOneAnswer());
         vaultRecordService.update("1", null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testUpdateInvalidId() {
-        when(vaultRecordRepository.findOne(any(String.class))).thenAnswer(mockFindOneAnswer());
+        when(vaultRecordRepository.findById(any(String.class))).thenAnswer(mockFindOneAnswer());
 
         final VaultRecord updatedRecord = new VaultRecord();
         updatedRecord.setId("1");
@@ -184,7 +184,7 @@ public class VaultRecordServiceTest {
 
     @Test
     public void testUpdate() {
-        when(vaultRecordRepository.findOne(any(String.class))).thenAnswer(mockFindOneAnswer());
+        when(vaultRecordRepository.findById(any(String.class))).thenAnswer(mockFindOneAnswer());
         when(vaultRecordRepository.save(any(VaultRecord.class))).thenAnswer(mockSaveAnswer());
 
         final VaultRecord updatedRecord = new VaultRecord();
@@ -203,7 +203,7 @@ public class VaultRecordServiceTest {
 
     @Test
     public void testUpdateUrlNotSet() {
-        when(vaultRecordRepository.findOne(any(String.class))).thenAnswer(mockFindOneAnswer());
+        when(vaultRecordRepository.findById(any(String.class))).thenAnswer(mockFindOneAnswer());
         when(vaultRecordRepository.save(any(VaultRecord.class))).thenAnswer(mockSaveAnswer());
 
         final VaultRecord updatedRecord = new VaultRecord();
@@ -222,7 +222,7 @@ public class VaultRecordServiceTest {
     private Answer<VaultRecord> mockSaveAnswer() {
         return new Answer<VaultRecord>() {
             public VaultRecord answer(InvocationOnMock invocation) {
-                return invocation.getArgumentAt(0, VaultRecord.class);
+                return invocation.getArgument(0, VaultRecord.class);
             }
         };
     }
@@ -230,7 +230,7 @@ public class VaultRecordServiceTest {
     private Answer<VaultRecord> mockFindOneAnswer() {
         return new Answer<VaultRecord>() {
             public VaultRecord answer(InvocationOnMock invocation) {
-                String id = invocation.getArgumentAt(0, String.class);
+                String id = invocation.getArgument(0, String.class);
                 return mockFindAllResult().stream()
                         .filter(r -> r.getId().equals(id))
                         .findAny()
@@ -242,7 +242,7 @@ public class VaultRecordServiceTest {
     private Answer<Page<VaultRecord>> mockFindAllAnswer() {
         return new Answer<Page<VaultRecord>>() {
             public Page<VaultRecord> answer(InvocationOnMock invocation) {
-                PageRequest pageRequest = invocation.getArgumentAt(0, PageRequest.class);
+                PageRequest pageRequest = invocation.getArgument(0, PageRequest.class);
 
 
                 return new PageImpl<>(mockFindAllResult(), pageRequest, 30);
@@ -253,7 +253,7 @@ public class VaultRecordServiceTest {
     private Answer<VaultRecord> mockCreateMethodAnswer() {
         return new Answer<VaultRecord>() {
             public VaultRecord answer(InvocationOnMock invocation) {
-                VaultRecord vaultRecordToCreate = invocation.getArgumentAt(0, VaultRecord.class);
+                VaultRecord vaultRecordToCreate = invocation.getArgument(0, VaultRecord.class);
                 vaultRecordToCreate.setId("1");
                 return vaultRecordToCreate;
             }

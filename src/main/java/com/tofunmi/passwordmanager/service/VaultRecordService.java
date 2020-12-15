@@ -77,12 +77,12 @@ public class VaultRecordService {
 
     private PageRequest buildPageRequest(int pageNumber) {
         final int pageSize = 8;
-        Sort sort = new Sort(Sort.Direction.DESC, "createdAt");
-        return new PageRequest(pageNumber, pageSize, sort);
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
+        return PageRequest.of(pageNumber, pageSize, sort);
     }
 
     private VaultRecord findById(String id) throws IllegalArgumentException {
-        VaultRecord vaultRecord = repository.findOne(id);
+        VaultRecord vaultRecord = repository.findById(id).orElse(null);
         if (vaultRecord == null) {
             throw new IllegalArgumentException(String.format("No Vault record for id - %s", id));
         }
@@ -122,7 +122,7 @@ public class VaultRecordService {
     }
 
     public List<VaultRecord> findAll() {
-        List<VaultRecord> records = repository.findAll(new Sort(Sort.Direction.ASC, "name"));
+        List<VaultRecord> records = repository.findAll(Sort.by(Sort.Direction.ASC, "name"));
         records.forEach(r -> r.setEncodedPassword(null));
         return records;
     }

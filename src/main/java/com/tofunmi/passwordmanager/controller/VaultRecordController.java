@@ -14,7 +14,7 @@ import java.util.List;
  * Created By Tofunmi on 11/24/2018
  */
 @RestController
-@RequestMapping(value = "api/v1/vault-records")
+@RequestMapping(value = "vault-records")
 public class VaultRecordController {
 
     private final VaultRecordService service;

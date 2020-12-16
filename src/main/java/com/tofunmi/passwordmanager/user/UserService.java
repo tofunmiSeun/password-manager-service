@@ -3,6 +3,8 @@ package com.tofunmi.passwordmanager.user;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import java.util.Optional;
+
 /**
  * Created By tofunmi on 15/12/2020
  */
@@ -25,8 +27,12 @@ public class UserService {
         return repository.save(user).getId();
     }
 
+    public Optional<User> findById(String id) {
+        return repository.findById(id);
+    }
+
     public void delete(String id) {
-        Assert.isTrue(repository.existsById(id), "User not present for ID");
+        Assert.isTrue(repository.existsById(id), "User not present for ID " + id);
         deleteForUser(id);
         repository.deleteById(id);
     }

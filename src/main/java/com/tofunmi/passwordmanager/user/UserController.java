@@ -8,7 +8,7 @@ import java.util.List;
  * Created By tofunmi on 15/12/2020
  */
 @RestController
-@RequestMapping(value = "users")
+@RequestMapping(value = "user")
 public class UserController {
     private final UserService service;
 

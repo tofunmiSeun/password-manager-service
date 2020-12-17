@@ -49,4 +49,8 @@ public class DeviceService {
             repository.save(device);
         });
     }
+
+    public Optional<Device> findById(String id) {
+        return repository.findById(id);
+    }
 }

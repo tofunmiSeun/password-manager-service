@@ -22,12 +22,12 @@ public class DeviceController {
     }
 
     @PutMapping("{id}")
-    public void updateCredentials(@PathVariable String id, @RequestBody UpdateDeviceRequestBody requestBody) {
-         service.updateCredentials(id, requestBody);
+    public void updateCredentials(@PathVariable String id, @RequestBody UpdateDeviceRequestBody requestBody, Principal principal) {
+         service.updateCredentials(id, requestBody, principal);
     }
 
     @DeleteMapping("{id}")
-    public void delete(@PathVariable String id) {
-        service.delete(id);
+    public void delete(@PathVariable String id, Principal principal) {
+        service.delete(id, principal);
     }
 }

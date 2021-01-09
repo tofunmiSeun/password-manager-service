@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.security.Principal;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -34,23 +35,33 @@ public class DeviceService {
         return repository.save(device).getId();
     }
 
-    public void delete(String id) {
-        Assert.isTrue(repository.existsById(id), "Device not present for ID " + id);
+    public void delete(String id, Principal principal) {
+        Device device = getDevice(id);
+        validateThatPrincipalOwnsDevice(principal, device);
         repository.deleteById(id);
     }
 
-    public void updateCredentials(String id, UpdateDeviceRequestBody requestBody) {
-        Optional<Device> optionalDevice = repository.findById(id);
-        Assert.isTrue(optionalDevice.isPresent(), "Device not present for ID " + id);
-        optionalDevice.ifPresent(device -> {
-            device.setPublicKey(requestBody.getPublicKey());
-            device.setEncryptedPrivateKey(requestBody.getEncryptedPrivateKey());
-            device.setMukSalt(requestBody.getMukSalt());
-            repository.save(device);
-        });
+    public void updateCredentials(String id, UpdateDeviceRequestBody requestBody, Principal principal) {
+        Device device = getDevice(id);
+        validateThatPrincipalOwnsDevice(principal, device);
+        device.setPublicKey(requestBody.getPublicKey());
+        device.setEncryptedPrivateKey(requestBody.getEncryptedPrivateKey());
+        device.setMukSalt(requestBody.getMukSalt());
+        repository.save(device);
+
     }
 
     public Optional<Device> findById(String id) {
         return repository.findById(id);
+    }
+
+    private Device getDevice(String id) {
+        Optional<Device> optionalDevice = repository.findById(id);
+        Assert.isTrue(optionalDevice.isPresent(), "Device not present for ID " + id);
+        return optionalDevice.get();
+    }
+
+    private void validateThatPrincipalOwnsDevice(Principal principal, Device device) {
+        Assert.isTrue(Objects.equals(principal.getName(), device.getUser().getEmailAddress()), "User does not won this device");
     }
 }

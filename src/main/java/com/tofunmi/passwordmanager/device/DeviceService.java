@@ -5,6 +5,7 @@ import com.tofunmi.passwordmanager.user.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import java.security.Principal;
 import java.util.Optional;
 
 /**
@@ -21,12 +22,11 @@ public class DeviceService {
         this.userService = userService;
     }
 
-    public String create(NewDeviceRequestBody requestBody) {
-        Optional<User> userForDevice = userService.findById(requestBody.getUserId());
-        Assert.isTrue(userForDevice.isPresent(), "User not present for id " + requestBody.getUserId());
+    public String create(NewDeviceRequestBody requestBody, Principal principal) {
+        User userForDevice = userService.findByPrincipal(principal);
 
         Device device = new Device();
-        device.setUser(userForDevice.get());
+        device.setUser(userForDevice);
         device.setPublicKey(requestBody.getPublicKey());
         device.setEncryptedPrivateKey(requestBody.getEncryptedPrivateKey());
         device.setMukSalt(requestBody.getMukSalt());

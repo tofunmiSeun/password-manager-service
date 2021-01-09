@@ -7,7 +7,6 @@ import lombok.Data;
  */
 @Data
 public class NewDeviceRequestBody {
-    private String userId;
     private String publicKey;
     private String encryptedPrivateKey;
     private String mukSalt;

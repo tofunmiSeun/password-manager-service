@@ -18,4 +18,8 @@ import javax.persistence.Table;
 public class User extends BaseEntity {
     @Column(nullable = false)
     private String emailAddress;
+    @Column(nullable = false)
+    private String passwordSalt;
+    @Column(nullable = false)
+    private String hashedPassword;
 }

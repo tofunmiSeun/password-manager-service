@@ -2,8 +2,6 @@ package com.tofunmi.passwordmanager.user;
 
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 /**
  * Created By tofunmi on 15/12/2020
  */
@@ -16,9 +14,9 @@ public class UserController {
         this.service = service;
     }
 
-    @PostMapping
-    public String create(@RequestParam String emailAddress) {
-        return service.create(emailAddress);
+    @PostMapping("register")
+    public String create(@RequestParam NewUserRequestBody requestBody) {
+        return service.create(requestBody.getEmailAddress(), requestBody.getPassword());
     }
 
     @DeleteMapping("{id}")

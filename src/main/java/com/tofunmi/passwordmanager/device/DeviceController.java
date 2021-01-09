@@ -2,6 +2,8 @@ package com.tofunmi.passwordmanager.device;
 
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+
 /**
  * Created By tofunmi on 16/12/2020
  */
@@ -15,8 +17,8 @@ public class DeviceController {
     }
 
     @PostMapping
-    public String create(@RequestBody NewDeviceRequestBody requestBody) {
-        return service.create(requestBody);
+    public String create(@RequestBody NewDeviceRequestBody requestBody, Principal principal) {
+        return service.create(requestBody, principal);
     }
 
     @PutMapping("{id}")

@@ -37,7 +37,7 @@ public class AppAuthFilter extends GenericFilterBean {
         filterChain.doFilter(request, response);
     }
 
-    String resolveToken(HttpServletRequest req) {
+    private String resolveToken(HttpServletRequest req) {
         String bearerToken = req.getHeader("Authorization");
         if (bearerToken != null && bearerToken.startsWith("Basic ")) {
             String token = bearerToken.replace("Basic ", "");

@@ -8,10 +8,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
 import java.security.SecureRandom;
-import java.util.Base64;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Created By tofunmi on 15/12/2020
@@ -26,14 +23,17 @@ public class UserService {
         this.repository = repository;
     }
 
-    public String create(String emailAddress, String password) {
+    public UserTokenResponse create(String name, String emailAddress, String password) {
+        Assert.hasText(name, "Name is not valid");
         Assert.hasText(emailAddress, "Email address is not valid");
         Assert.hasText(password, "Password not provided");
+        Assert.isTrue(password.length() >= 8, "Password must have at least 8 characters");
 
         if (repository.findByEmailAddress(emailAddress).isPresent()) {
             throw new IllegalStateException("Email address already present for a user");
         }
         User user = new User();
+        user.setName(name);
         user.setEmailAddress(emailAddress);
 
         String salt = createSalt();
@@ -42,7 +42,20 @@ public class UserService {
         user.setPasswordSalt(salt);
         user.setHashedPassword(hashedPassword);
 
-        return repository.save(user).getId();
+        repository.save(user);
+        return new UserTokenResponse(name, createUserToken(emailAddress, password));
+    }
+
+    public UserTokenResponse login(String emailAddress, String password) {
+        Assert.hasText(emailAddress, "Email address is not valid");
+        Assert.hasText(password, "Password not provided");
+
+        Optional<User> user = findByEmailAddress(emailAddress);
+        if (user.isPresent() && passwordMatches(user.get(), password)) {
+             return new UserTokenResponse(user.get().getName(),createUserToken(emailAddress, password));
+        } else {
+            throw new IllegalArgumentException("Invalid email address / password");
+        }
     }
 
     public Optional<User> findById(String id) {
@@ -70,6 +83,10 @@ public class UserService {
 
     private void deleteForUser(String userId) {
 
+    }
+
+    private static String createUserToken(String emailAddress, String password) {
+        return Base64.getEncoder().encodeToString(String.format("%s:%s",emailAddress,password).getBytes());
     }
 
     private static String createSalt() {

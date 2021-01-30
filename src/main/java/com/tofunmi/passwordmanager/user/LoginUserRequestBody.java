@@ -2,15 +2,14 @@ package com.tofunmi.passwordmanager.user;
 
 import lombok.Data;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
 
 /**
  * Created By tofunmi on 16/12/2020
  */
 @Data
-public class NewUserRequestBody {
-    @NotEmpty(message = "Name is required")
-    private String name;
+public class LoginUserRequestBody {
     @Email(message = "Invalid email format")
     private String email;
     @NotEmpty(message = "Password must be at least 8 characters")

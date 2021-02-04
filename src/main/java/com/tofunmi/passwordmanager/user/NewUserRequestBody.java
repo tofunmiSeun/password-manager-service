@@ -13,6 +13,6 @@ public class NewUserRequestBody {
     private String name;
     @Email(message = "Invalid email format")
     private String email;
-    @NotEmpty(message = "Password must be at least 8 characters")
+    @Size(min = 8, message = "Password must be at least 8 characters")
     private String password;
 }

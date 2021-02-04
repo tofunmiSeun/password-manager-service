@@ -12,6 +12,6 @@ import javax.validation.constraints.NotEmpty;
 public class LoginUserRequestBody {
     @Email(message = "Invalid email format")
     private String email;
-    @NotEmpty(message = "Password must be at least 8 characters")
+    @NotEmpty(message = "Password not present")
     private String password;
 }

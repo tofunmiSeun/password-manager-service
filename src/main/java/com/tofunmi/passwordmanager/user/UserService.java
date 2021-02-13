@@ -43,7 +43,7 @@ public class UserService {
         user.setHashedPassword(hashedPassword);
 
         repository.save(user);
-        return new UserTokenResponse(name, createUserToken(emailAddress, password));
+        return new UserTokenResponse(user.getId(), name, emailAddress, createUserToken(emailAddress, password));
     }
 
     public UserTokenResponse login(String emailAddress, String password) {
@@ -52,7 +52,7 @@ public class UserService {
 
         Optional<User> user = findByEmailAddress(emailAddress);
         if (user.isPresent() && passwordMatches(user.get(), password)) {
-             return new UserTokenResponse(user.get().getName(),createUserToken(emailAddress, password));
+            return new UserTokenResponse(user.get().getId(), user.get().getName(), emailAddress, createUserToken(emailAddress, password));
         } else {
             throw new IllegalArgumentException("Invalid email address / password");
         }
@@ -86,7 +86,7 @@ public class UserService {
     }
 
     private static String createUserToken(String emailAddress, String password) {
-        return Base64.getEncoder().encodeToString(String.format("%s:%s",emailAddress,password).getBytes());
+        return Base64.getEncoder().encodeToString(String.format("%s:%s", emailAddress, password).getBytes());
     }
 
     private static String createSalt() {

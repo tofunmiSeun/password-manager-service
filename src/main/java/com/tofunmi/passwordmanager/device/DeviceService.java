@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -28,11 +29,17 @@ public class DeviceService {
 
         Device device = new Device();
         device.setUser(userForDevice);
+        device.setAlias(requestBody.getAlias());
         device.setPublicKey(requestBody.getPublicKey());
         device.setEncryptedPrivateKey(requestBody.getEncryptedPrivateKey());
         device.setMukSalt(requestBody.getMukSalt());
 
         return repository.save(device).getId();
+    }
+
+    public List<Device> getAll(Principal principal) {
+        User user = userService.findByPrincipal(principal);
+        return repository.findAllByUser(user);
     }
 
     public void delete(String id, Principal principal) {

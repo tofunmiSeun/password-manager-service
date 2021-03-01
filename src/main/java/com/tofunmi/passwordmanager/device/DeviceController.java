@@ -3,6 +3,7 @@ package com.tofunmi.passwordmanager.device;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 
 /**
  * Created By tofunmi on 16/12/2020
@@ -21,9 +22,14 @@ public class DeviceController {
         return service.create(requestBody, principal);
     }
 
+    @GetMapping
+    public List<Device> getAll(Principal principal) {
+        return service.getAll(principal);
+    }
+
     @PutMapping("{id}")
     public void updateCredentials(@PathVariable String id, @RequestBody UpdateDeviceRequestBody requestBody, Principal principal) {
-         service.updateCredentials(id, requestBody, principal);
+        service.updateCredentials(id, requestBody, principal);
     }
 
     @DeleteMapping("{id}")

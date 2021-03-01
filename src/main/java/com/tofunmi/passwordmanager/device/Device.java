@@ -20,9 +20,11 @@ public class Device extends BaseEntity {
     @ManyToOne
     private User user;
     @Column(nullable = false)
+    private String alias;
+    @Column(nullable = false, columnDefinition="TEXT")
     private String publicKey;
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition="TEXT")
     private String encryptedPrivateKey;
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition="TEXT")
     private String mukSalt;
 }

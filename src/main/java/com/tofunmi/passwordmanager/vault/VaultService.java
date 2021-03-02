@@ -4,6 +4,8 @@ import com.tofunmi.passwordmanager.user.User;
 import com.tofunmi.passwordmanager.user.UserService;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -26,6 +28,11 @@ public class VaultService {
         vault.setName(requestBody.getName());
         vault.setCreatedBy(user);
         return repository.save(vault).getId();
+    }
+
+    public List<Vault> getAll(Principal principal) {
+        User user = userService.findByPrincipal(principal);
+        return repository.findByCreatedBy(user);
     }
 
     public Optional<Vault> findById(String id) {

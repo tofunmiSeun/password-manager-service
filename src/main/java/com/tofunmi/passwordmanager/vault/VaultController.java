@@ -1,8 +1,6 @@
 package com.tofunmi.passwordmanager.vault;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
@@ -22,7 +20,12 @@ public class VaultController {
     }
 
     @GetMapping
-    public List<Vault> getAll(Principal principal) {
+    public List<VaultViewModel> getAll(Principal principal) {
         return service.getAll(principal);
+    }
+
+    @PostMapping
+    public String create(@RequestBody CreateVaultRequestBody requestBody,  Principal principal) {
+        return service.create(requestBody, principal);
     }
 }

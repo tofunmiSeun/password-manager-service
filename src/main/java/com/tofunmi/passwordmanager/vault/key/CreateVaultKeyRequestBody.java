@@ -8,7 +8,6 @@ import lombok.Data;
 @Data
 public class CreateVaultKeyRequestBody {
     private String vaultId;
-    private String userId;
     private String deviceId;
     private String encryptedVaultKey;
 }

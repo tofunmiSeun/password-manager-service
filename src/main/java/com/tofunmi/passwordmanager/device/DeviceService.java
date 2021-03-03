@@ -9,6 +9,7 @@ import java.security.Principal;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Created By tofunmi on 16/12/2020
@@ -37,9 +38,17 @@ public class DeviceService {
         return repository.save(device).getId();
     }
 
-    public List<Device> getAll(Principal principal) {
+    public List<DeviceViewModel> getAll(Principal principal) {
         User user = userService.findByPrincipal(principal);
-        return repository.findAllByUser(user);
+        return repository.findAllByUser(user).stream()
+                .map(d -> DeviceViewModel.builder()
+                        .id(d.getId())
+                        .alias(d.getAlias())
+                        .encryptedPrivateKey(d.getEncryptedPrivateKey())
+                        .mukSalt(d.getMukSalt())
+                        .publicKey(d.getPublicKey())
+                        .build())
+                .collect(Collectors.toList());
     }
 
     public void delete(String id, Principal principal) {

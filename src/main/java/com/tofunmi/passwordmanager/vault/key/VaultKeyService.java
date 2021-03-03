@@ -2,11 +2,14 @@ package com.tofunmi.passwordmanager.vault.key;
 
 import com.tofunmi.passwordmanager.device.Device;
 import com.tofunmi.passwordmanager.device.DeviceService;
+import com.tofunmi.passwordmanager.user.User;
+import com.tofunmi.passwordmanager.user.UserService;
 import com.tofunmi.passwordmanager.vault.Vault;
-import com.tofunmi.passwordmanager.vault.VaultService;
+import com.tofunmi.passwordmanager.vault.VaultRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import java.security.Principal;
 import java.util.Objects;
 
 /**
@@ -15,21 +18,25 @@ import java.util.Objects;
 @Service
 public class VaultKeyService {
     private final VaultKeyRepository repository;
-    private final VaultService vaultService;
+    private final VaultRepository vaultRepository;
     private final DeviceService deviceService;
+    private final UserService userService;
 
-    public VaultKeyService(VaultKeyRepository repository, VaultService vaultService, DeviceService deviceService) {
+    public VaultKeyService(VaultKeyRepository repository, VaultRepository vaultRepository, DeviceService deviceService, UserService userService) {
         this.repository = repository;
-        this.vaultService = vaultService;
+        this.vaultRepository = vaultRepository;
         this.deviceService = deviceService;
+        this.userService = userService;
     }
 
-    public String create(CreateVaultKeyRequestBody requestBody) {
+    public String create(CreateVaultKeyRequestBody requestBody, Principal principal) {
+        User user = userService.findByPrincipal(principal);
         Device device = deviceService.findById(requestBody.getDeviceId()).
                 orElseThrow(() -> new IllegalArgumentException("Could not find device for id " + requestBody.getDeviceId()));
-        Assert.isTrue(Objects.equals(requestBody.getUserId(), device.getUser().getId()), "User Id does not match device");
 
-        Vault vault = vaultService.findById(requestBody.getVaultId()).
+        Assert.isTrue(Objects.equals(user.getId(), device.getUser().getId()), "User does not own device");
+
+        Vault vault = vaultRepository.findById(requestBody.getVaultId()).
                 orElseThrow(() -> new IllegalArgumentException("Could not find vault for id " + requestBody.getVaultId()));
 
         VaultKey vaultKey = new VaultKey();

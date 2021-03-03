@@ -23,7 +23,7 @@ public class DeviceController {
     }
 
     @GetMapping
-    public List<Device> getAll(Principal principal) {
+    public List<DeviceViewModel> getAll(Principal principal) {
         return service.getAll(principal);
     }
 

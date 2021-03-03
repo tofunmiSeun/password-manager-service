@@ -30,8 +30,8 @@ public class VaultRecordService {
         this.vaultKeyService = vaultKeyService;
     }
 
-    public String create(CreateRecordRequestBody requestBody, Principal principal) {
-        Vault vault = getVault(requestBody.getVaultId());
+    public String create(String vaultId, CreateRecordRequestBody requestBody, Principal principal) {
+        Vault vault = getVault(vaultId);
         User user = userService.findByPrincipal(principal);
         vaultKeyService.validateUserHasAccessToVault(vault, user);
 

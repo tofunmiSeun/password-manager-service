@@ -7,7 +7,6 @@ import lombok.Data;
  */
 @Data
 public class CreateRecordRequestBody {
-    private String vaultId;
     private String name;
     private String url;
     private String username;

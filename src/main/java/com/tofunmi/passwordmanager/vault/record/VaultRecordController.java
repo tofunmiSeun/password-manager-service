@@ -19,9 +19,9 @@ public class VaultRecordController {
         this.service = service;
     }
 
-    @PostMapping
-    public String create(@RequestBody CreateRecordRequestBody requestBody, Principal principal) {
-        return service.create(requestBody, principal);
+    @PostMapping("create/{vaultId}")
+    public String create(@PathVariable String vaultId, @RequestBody CreateRecordRequestBody requestBody, Principal principal) {
+        return service.create(vaultId, requestBody, principal);
     }
 
     @GetMapping("for-vault/{vaultId}")

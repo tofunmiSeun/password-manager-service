@@ -33,7 +33,7 @@ public class VaultRecordService {
     public String create(CreateRecordRequestBody requestBody, Principal principal) {
         Vault vault = getVault(requestBody.getVaultId());
         User user = userService.findByPrincipal(principal);
-        validateUserHasAccessToVault(user, vault);
+        vaultKeyService.validateUserHasAccessToVault(vault, user);
 
         VaultRecord vaultRecord = new VaultRecord();
         vaultRecord.setVault(vault);
@@ -53,7 +53,7 @@ public class VaultRecordService {
     public List<VaultRecordViewModel> findForVault(String vaultId, Principal principal) {
         Vault vault = getVault(vaultId);
         User user = userService.findByPrincipal(principal);
-        validateUserHasAccessToVault(user, vault);
+        vaultKeyService.validateUserHasAccessToVault(vault, user);
 
         return repository.findAllByVault(vault).stream()
                 .map(this::toViewModel)
@@ -80,10 +80,6 @@ public class VaultRecordService {
     private Vault getVault(String vaultId) {
         return vaultService.findById(vaultId)
                 .orElseThrow(() -> new IllegalArgumentException("Could not find vault for id " + vaultId));
-    }
-
-    private void validateUserHasAccessToVault(User user, Vault vault) {
-        Assert.isTrue(vaultKeyService.isVaultAccessibleByUser(vault, user), "User has no access to vault");
     }
 
     private VaultRecordViewModel toViewModel(VaultRecord record) {

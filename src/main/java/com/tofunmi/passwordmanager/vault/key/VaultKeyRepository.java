@@ -6,6 +6,7 @@ import com.tofunmi.passwordmanager.vault.Vault;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created By tofunmi on 28/11/2020
@@ -13,4 +14,5 @@ import java.util.List;
 public interface VaultKeyRepository extends JpaRepository<VaultKey, String> {
     List<VaultKey> findAllByDevice(Device device);
     boolean existsByVaultAndDevice_user(Vault vault, User user);
+    Optional<VaultKey> findByVaultAndDevice(Vault vault, Device device);
 }

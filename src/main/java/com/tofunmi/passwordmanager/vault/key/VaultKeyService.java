@@ -32,12 +32,11 @@ public class VaultKeyService {
 
     public String create(CreateVaultKeyRequestBody requestBody, Principal principal) {
         User user = userService.findByPrincipal(principal);
-        Device device = deviceService.findById(requestBody.getDeviceId()).
-                orElseThrow(() -> new IllegalArgumentException("Could not find device for id " + requestBody.getDeviceId()));
+        Device device = getDevice(requestBody.getDeviceId());
         validateUserOwnsDevice(user, device);
 
-        Vault vault = vaultRepository.findById(requestBody.getVaultId()).
-                orElseThrow(() -> new IllegalArgumentException("Could not find vault for id " + requestBody.getVaultId()));
+        Vault vault = getVault(requestBody.getVaultId());
+        Assert.isTrue(!repository.findByVaultAndDevice(vault, device).isPresent(), "Device already has access to vault");
 
         VaultKey vaultKey = new VaultKey();
         vaultKey.setDevice(device);
@@ -49,14 +48,27 @@ public class VaultKeyService {
 
     public List<VaultKey> getForDevice(String deviceId, Principal principal) {
         User user = userService.findByPrincipal(principal);
-        Device device = deviceService.findById(deviceId).
-                orElseThrow(() -> new IllegalArgumentException("Could not find device for id " + deviceId));
+        Device device = getDevice(deviceId);
         validateUserOwnsDevice(user, device);
         return repository.findAllByDevice(device);
     }
 
-    public boolean isVaultAccessibleByUser (Vault vault, User user) {
-        return repository.existsByVaultAndDevice_user(vault, user);
+    public VaultKeyViewModel findForVaultAndDevice(String vaultId, String deviceId, Principal principal) {
+        User user = userService.findByPrincipal(principal);
+        Device device = getDevice(deviceId);
+        validateUserOwnsDevice(user, device);
+
+        Vault vault = getVault(vaultId);
+
+        return repository.findByVaultAndDevice(vault, device)
+                .map(vaultKey -> VaultKeyViewModel.builder()
+                        .encryptedVaultKey(vaultKey.getEncryptedVaultKey())
+                        .build())
+                .orElseThrow(() -> new IllegalArgumentException("Could not find vault key for device & vault "));
+    }
+
+    public void validateUserHasAccessToVault(Vault vault, User user) {
+        Assert.isTrue(repository.existsByVaultAndDevice_user(vault, user), "User has no access to vault");
     }
 
     private void validateUserOwnsDevice(User user, Device device) {
@@ -74,4 +86,15 @@ public class VaultKeyService {
         Assert.isTrue(repository.existsById(id), "Vault key not found for id " + id);
         repository.deleteById(id);
     }
+
+    private Device getDevice (String deviceId) {
+        return deviceService.findById(deviceId).
+                orElseThrow(() -> new IllegalArgumentException("Could not find device for id " + deviceId));
+    }
+
+    private Vault getVault (String vaultId) {
+        return vaultRepository.findById(vaultId).
+                orElseThrow(() -> new IllegalArgumentException("Could not find vault for id " + vaultId));
+    }
+
 }

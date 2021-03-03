@@ -4,10 +4,13 @@ import com.tofunmi.passwordmanager.user.User;
 import com.tofunmi.passwordmanager.user.UserService;
 import com.tofunmi.passwordmanager.vault.Vault;
 import com.tofunmi.passwordmanager.vault.VaultService;
+import com.tofunmi.passwordmanager.vault.key.VaultKeyService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import java.security.Principal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created By tofunmi on 28/11/2020
@@ -18,18 +21,19 @@ public class VaultRecordService {
     private final VaultRecordRepository repository;
     private final VaultService vaultService;
     private final UserService userService;
+    private final VaultKeyService vaultKeyService;
 
-    public VaultRecordService(VaultRecordRepository repository, VaultService vaultService, UserService userService) {
+    public VaultRecordService(VaultRecordRepository repository, VaultService vaultService, UserService userService, VaultKeyService vaultKeyService) {
         this.repository = repository;
         this.vaultService = vaultService;
         this.userService = userService;
+        this.vaultKeyService = vaultKeyService;
     }
 
-    public String create(CreateRecordRequestBody requestBody) {
-        Vault vault = vaultService.findById(requestBody.getVaultId())
-                .orElseThrow(() -> new IllegalArgumentException("Could not find vault for id " + requestBody.getVaultId()));
-        User user = userService.findById(requestBody.getVaultId())
-                .orElseThrow(() -> new IllegalArgumentException("Could not find user for id " + requestBody.getVaultId()));
+    public String create(CreateRecordRequestBody requestBody, Principal principal) {
+        Vault vault = getVault(requestBody.getVaultId());
+        User user = userService.findByPrincipal(principal);
+        validateUserHasAccessToVault(user, vault);
 
         VaultRecord vaultRecord = new VaultRecord();
         vaultRecord.setVault(vault);
@@ -46,6 +50,15 @@ public class VaultRecordService {
         return repository.findAll();
     }
 
+    public List<VaultRecordViewModel> findForVault(String vaultId, Principal principal) {
+        Vault vault = getVault(vaultId);
+        User user = userService.findByPrincipal(principal);
+        validateUserHasAccessToVault(user, vault);
+
+        return repository.findAllByVault(vault).stream()
+                .map(this::toViewModel)
+                .collect(Collectors.toList());
+    }
 
     public void update(String id, EditRecordRequestBody update) {
         VaultRecord vaultRecord = repository.findById(id)
@@ -62,5 +75,25 @@ public class VaultRecordService {
     public void delete(String id) {
         Assert.isTrue(repository.existsById(id), "Vault record not found for id " + id);
         repository.deleteById(id);
+    }
+
+    private Vault getVault(String vaultId) {
+        return vaultService.findById(vaultId)
+                .orElseThrow(() -> new IllegalArgumentException("Could not find vault for id " + vaultId));
+    }
+
+    private void validateUserHasAccessToVault(User user, Vault vault) {
+        Assert.isTrue(vaultKeyService.isVaultAccessibleByUser(vault, user), "User has no access to vault");
+    }
+
+    private VaultRecordViewModel toViewModel(VaultRecord record) {
+        return VaultRecordViewModel.builder()
+                .vaultId(record.getVault().getId())
+                .createdBy(record.getCreatedBy().getName())
+                .name(record.getName())
+                .url(record.getUrl())
+                .username(record.getUsername())
+                .password(record.getPassword())
+                .build();
     }
 }

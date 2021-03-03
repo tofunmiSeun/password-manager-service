@@ -55,6 +55,10 @@ public class VaultKeyService {
         return repository.findAllByDevice(device);
     }
 
+    public boolean isVaultAccessibleByUser (Vault vault, User user) {
+        return repository.existsByVaultAndDevice_user(vault, user);
+    }
+
     private void validateUserOwnsDevice(User user, Device device) {
         Assert.isTrue(Objects.equals(user.getId(), device.getUser().getId()), "User does not own device");
     }

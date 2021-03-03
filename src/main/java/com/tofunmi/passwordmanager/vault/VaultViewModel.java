@@ -13,5 +13,6 @@ import java.time.Instant;
 public class VaultViewModel {
     private String id;
     private String name;
+    private String createdBy;
     private Instant createdAt;
 }

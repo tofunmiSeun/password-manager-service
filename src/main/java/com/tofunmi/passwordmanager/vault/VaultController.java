@@ -19,13 +19,13 @@ public class VaultController {
         this.service = service;
     }
 
-    @GetMapping
-    public List<VaultViewModel> getAll(Principal principal) {
-        return service.getAll(principal);
+    @PostMapping
+    public String create(@RequestBody CreateVaultRequestBody requestBody, Principal principal) {
+        return service.create(requestBody, principal);
     }
 
-    @PostMapping
-    public String create(@RequestBody CreateVaultRequestBody requestBody,  Principal principal) {
-        return service.create(requestBody, principal);
+    @GetMapping("for-device/{deviceId}")
+    public List<VaultViewModel> forDevice(@PathVariable String deviceId, Principal principal) {
+        return service.forDevice(deviceId, principal);
     }
 }

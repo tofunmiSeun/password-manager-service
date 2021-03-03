@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -33,8 +34,7 @@ public class VaultKeyService {
         User user = userService.findByPrincipal(principal);
         Device device = deviceService.findById(requestBody.getDeviceId()).
                 orElseThrow(() -> new IllegalArgumentException("Could not find device for id " + requestBody.getDeviceId()));
-
-        Assert.isTrue(Objects.equals(user.getId(), device.getUser().getId()), "User does not own device");
+        validateUserOwnsDevice(user, device);
 
         Vault vault = vaultRepository.findById(requestBody.getVaultId()).
                 orElseThrow(() -> new IllegalArgumentException("Could not find vault for id " + requestBody.getVaultId()));
@@ -45,6 +45,18 @@ public class VaultKeyService {
         vaultKey.setEncryptedVaultKey(requestBody.getEncryptedVaultKey());
 
         return repository.save(vaultKey).getId();
+    }
+
+    public List<VaultKey> getForDevice(String deviceId, Principal principal) {
+        User user = userService.findByPrincipal(principal);
+        Device device = deviceService.findById(deviceId).
+                orElseThrow(() -> new IllegalArgumentException("Could not find device for id " + deviceId));
+        validateUserOwnsDevice(user, device);
+        return repository.findAllByDevice(device);
+    }
+
+    private void validateUserOwnsDevice(User user, Device device) {
+        Assert.isTrue(Objects.equals(user.getId(), device.getUser().getId()), "User does not own device");
     }
 
     public void edit(String id, String newEncryptedVaultKey) {

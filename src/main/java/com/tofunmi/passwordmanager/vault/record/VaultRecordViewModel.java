@@ -9,6 +9,7 @@ import lombok.Data;
 @Data
 @Builder
 public class VaultRecordViewModel {
+    private String id;
     private String vaultId;
     private String name;
     private String url;

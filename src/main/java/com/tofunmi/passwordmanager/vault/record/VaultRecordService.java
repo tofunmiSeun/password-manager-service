@@ -5,6 +5,7 @@ import com.tofunmi.passwordmanager.user.UserService;
 import com.tofunmi.passwordmanager.vault.Vault;
 import com.tofunmi.passwordmanager.vault.VaultService;
 import com.tofunmi.passwordmanager.vault.key.VaultKeyService;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -55,7 +56,7 @@ public class VaultRecordService {
         User user = userService.findByPrincipal(principal);
         vaultKeyService.validateUserHasAccessToVault(vault, user);
 
-        return repository.findAllByVault(vault).stream()
+        return repository.findAllByVault(vault, Sort.by(Sort.Direction.DESC, "lastUpdateTime")).stream()
                 .map(this::toViewModel)
                 .collect(Collectors.toList());
     }
@@ -91,6 +92,7 @@ public class VaultRecordService {
                 .url(record.getUrl())
                 .username(record.getUsername())
                 .password(record.getPassword())
+                .lastModifiedAt(record.getLastUpdateTime())
                 .build();
     }
 }

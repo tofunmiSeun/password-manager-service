@@ -3,6 +3,8 @@ package com.tofunmi.passwordmanager.vault.record;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.Instant;
+
 /**
  * Created By tofunmi on 19/12/2020
  */
@@ -16,4 +18,5 @@ public class VaultRecordViewModel {
     private String username;
     private String password;
     private String createdBy;
+    private Instant lastModifiedAt;
 }

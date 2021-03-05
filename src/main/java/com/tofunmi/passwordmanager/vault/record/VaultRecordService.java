@@ -86,6 +86,7 @@ public class VaultRecordService {
         return VaultRecordViewModel.builder()
                 .id(record.getId())
                 .vaultId(record.getVault().getId())
+                .vaultName(record.getVault().getName())
                 .createdBy(record.getCreatedBy().getName())
                 .name(record.getName())
                 .url(record.getUrl())

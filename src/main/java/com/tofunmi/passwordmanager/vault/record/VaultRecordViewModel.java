@@ -13,6 +13,7 @@ import java.time.Instant;
 public class VaultRecordViewModel {
     private String id;
     private String vaultId;
+    private String vaultName;
     private String name;
     private String url;
     private String username;

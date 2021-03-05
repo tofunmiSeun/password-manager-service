@@ -72,8 +72,13 @@ public class VaultRecordService {
         repository.save(vaultRecord);
     }
 
-    public void delete(String id) {
-        Assert.isTrue(repository.existsById(id), "Vault record not found for id " + id);
+    public void delete(String id, Principal principal) {
+        VaultRecord vaultRecord = repository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Could not find vault record for id " + id));
+
+        User user = userService.findByPrincipal(principal);
+        vaultKeyService.validateUserHasAccessToVault(vaultRecord.getVault(), user);
+
         repository.deleteById(id);
     }
 

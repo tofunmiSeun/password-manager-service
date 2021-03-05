@@ -31,7 +31,7 @@ public class VaultRecordService {
         this.vaultKeyService = vaultKeyService;
     }
 
-    public String create(String vaultId, CreateRecordRequestBody requestBody, Principal principal) {
+    public String create(String vaultId, SubmitRecordRequestBody requestBody, Principal principal) {
         Vault vault = getVault(vaultId);
         User user = userService.findByPrincipal(principal);
         vaultKeyService.validateUserHasAccessToVault(vault, user);
@@ -47,10 +47,6 @@ public class VaultRecordService {
         return repository.save(vaultRecord).getId();
     }
 
-    public List<VaultRecord> getAll() {
-        return repository.findAll();
-    }
-
     public List<VaultRecordViewModel> findForVault(String vaultId, Principal principal) {
         Vault vault = getVault(vaultId);
         User user = userService.findByPrincipal(principal);
@@ -61,9 +57,12 @@ public class VaultRecordService {
                 .collect(Collectors.toList());
     }
 
-    public void update(String id, EditRecordRequestBody update) {
+    public void update(String id, SubmitRecordRequestBody update, Principal principal) {
         VaultRecord vaultRecord = repository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Could not find vault record for id " + id));
+
+        User user = userService.findByPrincipal(principal);
+        vaultKeyService.validateUserHasAccessToVault(vaultRecord.getVault(), user);
 
         vaultRecord.setName(update.getName());
         vaultRecord.setUrl(update.getUrl());

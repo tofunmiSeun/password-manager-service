@@ -20,12 +20,17 @@ public class VaultRecordController {
     }
 
     @PostMapping("create/{vaultId}")
-    public String create(@PathVariable String vaultId, @RequestBody CreateRecordRequestBody requestBody, Principal principal) {
+    public String create(@PathVariable String vaultId, @RequestBody SubmitRecordRequestBody requestBody, Principal principal) {
         return service.create(vaultId, requestBody, principal);
     }
 
     @GetMapping("for-vault/{vaultId}")
     public List<VaultRecordViewModel> forVault(@PathVariable String vaultId, Principal principal) {
         return service.findForVault(vaultId, principal);
+    }
+
+    @PostMapping("edit/{id}")
+    public void edit(@PathVariable String id, @RequestBody SubmitRecordRequestBody requestBody, Principal principal) {
+        service.update(id, requestBody, principal);
     }
 }

@@ -6,7 +6,7 @@ import lombok.Data;
  * Created By tofunmi on 19/12/2020
  */
 @Data
-public class EditRecordRequestBody {
+public class SubmitRecordRequestBody {
     private String name;
     private String url;
     private String username;

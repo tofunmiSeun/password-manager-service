@@ -34,7 +34,7 @@ public class VaultRecordController {
         service.update(id, requestBody, principal);
     }
 
-    @DeleteMapping("delete/{id}")
+    @PostMapping("delete/{id}")
     public void delete(@PathVariable String id, Principal principal) {
         service.delete(id, principal);
     }

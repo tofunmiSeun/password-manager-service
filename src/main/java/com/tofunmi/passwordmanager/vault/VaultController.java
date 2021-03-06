@@ -28,4 +28,9 @@ public class VaultController {
     public List<VaultViewModel> forDevice(@PathVariable String deviceId, Principal principal) {
         return service.forDevice(deviceId, principal);
     }
+
+    @PostMapping("edit/{id}")
+    public void edit(@PathVariable String id, @RequestBody EditVaultRequestBody requestBody, Principal principal) {
+         service.edit(id, requestBody, principal);
+    }
 }

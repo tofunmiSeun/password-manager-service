@@ -75,4 +75,14 @@ public class VaultService {
                 .createdAt(v.getCreatedAt())
                 .build();
     }
+
+    public void edit(String id, EditVaultRequestBody requestBody, Principal principal) {
+        Vault vault = repository.findById(id).orElseThrow(() -> new IllegalArgumentException("Could not find vault for id"));
+        User user = userService.findByPrincipal(principal);
+
+        vaultKeyService.validateUserHasAccessToVault(vault, user);
+
+        vault.setName(requestBody.getName());
+        repository.save(vault);
+    }
 }
